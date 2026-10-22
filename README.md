@@ -7,7 +7,7 @@ A browser-local editor for formatting Nepali court judgment drafts. Open DOCX, D
 1. Open or drop one draft (up to 25 MB). Its document preview appears immediately.
 2. Drag to select a word, a line, or several paragraphs. A floating formatting toolbar appears. Click a paragraph to target the entire paragraph. Right-click opens the full menu, with alignment, numbering, hierarchy and indent submenus.
 3. Use the toolbar for fonts, size, bold, italic, underline, strike, text colour, highlight and alignment. Ctrl+B/I/U work on the selection. Ctrl+F finds text and selects a match for formatting.
-4. Use **Number**, **Main**, **Sub**, or **Promote** for linked paragraph numbering. **Auto-number judgment paragraphs** targets detected body paragraphs and existing numbered paragraphs, excluding tables and headings. Review the selected paragraphs. Recognized typed prefixes are removed automatically when numbering is applied.
+4. Use **Number**, **Main**, **Demote**, or **Promote** for linked paragraph numbering. **Auto-number judgment paragraphs** targets detected body paragraphs and existing numbered paragraphs, excluding tables and headings. Review the selected paragraphs. Recognized typed prefixes are removed automatically when numbering is applied.
 5. Adjust paragraph indents, number gap, line spacing and before/after spacing in the right panel. First-line and hanging indents are mutually exclusive. Keep-with-next, keep-lines-together and page-break-before are supported.
 6. Copy formatting from one selection and paste it onto another (Ctrl+Alt+C / Ctrl+Alt+V). This copies text and paragraph formatting, while numbering membership is controlled separately. Undo/redo are available.
 7. Page setup controls paper size and margins. Defaults are A4, **left 1.5 cm and top/right/bottom 0.5 cm**. Letter, Legal and custom dimensions are available. These are user-requested working defaults, not official court formatting rules.
@@ -17,13 +17,17 @@ The sample contains fictional formatting text, without actual case facts or lega
 
 ## Nepali numbering and Fontasy Himali
 
-Numbers form one native Word multilevel list with up to nine levels. Assigning a parent as a subparagraph moves its descendants with it, and later numbers update. Removing a numbered paragraph adjusts following numbers. A subparagraph needs a preceding parent.
+Numbering supports up to nine levels. Demoting a parent moves its descendants with it, and later numbers update. Removing a numbered paragraph adjusts following numbers. Demote needs a preceding parent in the same section. Each level adds one 1.27 cm tab indent. Numbered paragraphs under a तपसिल heading start a separate list at १., including after edits or demotions elsewhere.
 
-Fontasy Himali is the default number font. Its legacy encoding uses ASCII digits for Nepali numeral glyphs and `=` for a full stop. The app therefore writes decimal Word counters and encoded separators when a Himali font is selected. Other number fonts use Unicode Devanagari counters. The mapping is consistent with the `FONTASY_HIMALI_TT` character map in `npttf2utf` 0.3.7; no conversion package is used at runtime.
+The default Word download writes actual Unicode Nepali number labels, followed by real tab stops, for consistent digits and literal dots across readers. The optional **Native Word auto-list** export uses Word Devanagari counters (`hindiNumbers`); some other readers display those counters as Western digits. In both modes the webpage automatically renumbers and adjusts hierarchy. Native mode also supports Word's own list renumbering after download. The number font defaults to Mangal. Legacy Fontasy Himali, Preeti and Kantipur fonts remain available for body text, while numbering falls back to Mangal so a missing legacy font cannot turn a separator into `=`. No legacy `=` encoding is written into number definitions.
 
-Install the selected font on the computer opening the Word file. Fonts are not bundled or embedded. The preview uses Unicode Nepali digits unless the operator loads a local Fontasy Himali font through **Load Fontasy Himali font for preview**. That font file stays in the browser. The number font name is customizable to match the installed font's family name.
+The list uses real Word number tabs. Main text starts at 1.27 cm and each demotion moves the paragraph one more 1.27 cm tab inside. Wrapped lines align with the paragraph text. Extra number gap shifts the text tab and hanging distance together, leaving the number position stable. First-line/hanging indents remain customizable.
 
-The number-to-text gap changes the list text tab stop and hanging distance together, keeping the number position stable. The preview uses a measured label width. Word uses its native tab and font metrics, so exact gaps and page breaks may differ slightly between applications.
+Page setup writes all four margins, zero gutter, appropriate orientation, and header/footer offsets to every section. Imported mirror, book-fold and gutter-at-top settings are cleared. Page margins exclude paragraph indentation.
+
+## Edit preview text
+
+Right-click a paragraph and choose **Edit paragraph text**. Edit it in the document canvas, then choose **Apply text edits** (Ctrl+Enter) or **Cancel editing** (Esc). Enter adds a new Word paragraph. Changes retain surrounding text styles and embedded objects; new paragraphs inherit paragraph formatting. Numbering and paragraph IDs adjust, and undo/redo includes text changes. Download is disabled until pending text edits are applied or cancelled.
 
 ## Import and preservation
 
@@ -34,7 +38,7 @@ The number-to-text gap changes the list text tab stop and hanging distance toget
 | RTF | Imports supported inline styles, fonts, sizes, colours, alignment and indents. Complex tables, images, lists, stylesheets and pagination may change. |
 | TXT | Supports UTF-8 and UTF-16 BOM detection. Each newline becomes a paragraph; empty lines are retained. |
 
-The app formats source wording; it does not rewrite facts, findings, names, dates or amounts. Numbering removes recognized numeric prefixes at paragraph starts. Preeti/Kantipur text is not converted to Unicode. Keep the correct font for legacy text.
+Formatting actions preserve source wording. Only explicit text edits change it. Numbering removes recognized numeric prefixes at paragraph starts. Preeti/Kantipur text is not converted to Unicode. Keep the correct font for legacy text.
 
 Browser pagination is approximate. Complex fields or embedded content can prevent exact word-to-source matching; those paragraphs can still be formatted as a whole. Unsupported nested paragraph structures report an error. Review final pagination and fonts in the intended Word application.
 
@@ -61,4 +65,4 @@ Open localhost:8000. Rebuild after source edits. `npm run portable` creates a si
 
 `public/` contains the UI. `src/engine.js` handles import and OOXML helpers; `src/editor.js` handles selections, run splitting, paragraph formatting, numbering, history snapshots and export. `src/vendor.cjs` bundles local dependencies. The build retains a narrow UTF-16 directory-name compatibility fix for the pinned legacy DOC extractor, verified against the actual browser Buffer implementation.
 
-Tests cover import regressions, Unicode preservation, partial formatting, hyperlinks/drawings/tables and unrelated package parts, linked numbering and hierarchy changes, Fontasy encoding, number gaps, special indents, page margins, undo snapshots and preview isolation. Third-party notices are included in the build.
+Tests cover import regressions, Unicode preservation, partial formatting, hyperlinks/drawings/tables and unrelated package parts, linked numbering and hierarchy changes, literal-dot Unicode numbering, तपसिल restarts, text edits, number gaps, special indents, page margins, undo snapshots and preview isolation. Third-party notices are included in the build.
