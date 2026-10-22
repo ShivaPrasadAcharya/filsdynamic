@@ -11,7 +11,9 @@ A browser-local editor for formatting Nepali court judgment drafts. Open DOCX, D
 5. Adjust paragraph indents, number gap, line spacing and before/after spacing in the right panel. First-line and hanging indents are mutually exclusive. Keep-with-next, keep-lines-together and page-break-before are supported.
 6. Copy formatting from one selection and paste it onto another (Ctrl+Alt+C / Ctrl+Alt+V). This copies text and paragraph formatting, while numbering membership is controlled separately. Undo/redo are available.
 7. Page setup controls paper size and margins. Defaults are A4, **left 1.5 cm and top/right/bottom 0.5 cm**. Letter, Legal and custom dimensions are available. These are user-requested working defaults, not official court formatting rules.
-8. Changes refresh the preview automatically. Download becomes available when the latest version is ready. Download before closing the page; documents are not persisted.
+8. In normal preview, click to place the caret. Enter splits a paragraph at the caret (or replaces a selection with a paragraph break); Backspace at the start joins it to the previous paragraph in the same body or table cell. Run styles, links and embedded objects are retained, and numbering updates. Add tab / Remove tab in the ribbon, floating toolbar or right-click Indent & spacing menu shift indentation by 1.27 cm without changing hierarchy. All numbered paragraphs at the same level in a section share the first paragraph’s number and text columns; changing indents or number gap updates that level together.
+
+Changes refresh the preview automatically. Download becomes available when the latest version is ready. Download before closing the page; documents are not persisted.
 
 The sample contains fictional formatting text, without actual case facts or legal conclusions.
 
@@ -38,7 +40,7 @@ Right-click a paragraph and choose **Edit paragraph text**. Edit it in the docum
 | RTF | Imports supported inline styles, fonts, sizes, colours, alignment and indents. Complex tables, images, lists, stylesheets and pagination may change. |
 | TXT | Supports UTF-8 and UTF-16 BOM detection. Each newline becomes a paragraph; empty lines are retained. |
 
-Formatting actions preserve source wording. Only explicit text edits change it. Numbering removes recognized numeric prefixes at paragraph starts. Preeti/Kantipur text is not converted to Unicode. Keep the correct font for legacy text.
+Formatting actions preserve source wording. Only explicit text edits and paragraph split/merge actions change it. Numbering removes recognized numeric prefixes at paragraph starts. Preeti/Kantipur text is not converted to Unicode. Keep the correct font for legacy text.
 
 Browser pagination is approximate. Complex fields or embedded content can prevent exact word-to-source matching; those paragraphs can still be formatted as a whole. Unsupported nested paragraph structures report an error. Review final pagination and fonts in the intended Word application.
 
