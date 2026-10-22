@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createRequire} from 'node:module';
+import {createHash} from 'node:crypto';
 import {Transform,PassThrough} from 'node:stream';
 const require=createRequire(import.meta.url),browserify=require('browserify');
 const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'_site');
@@ -18,3 +19,8 @@ await fs.writeFile(path.join(out,'vendor.js'),bundle);await fs.writeFile(path.jo
 const licenses=[];for(const name of ['jszip','docx-preview','word-extractor','rtf-parser']){const folder=path.join(root,'node_modules',name);for(const candidate of ['LICENSE','LICENSE.md','LICENSE.txt','license']){try{licenses.push(`${name}\n${await fs.readFile(path.join(folder,candidate),'utf8')}\n`);break;}catch{}}}
 await fs.writeFile(path.join(out,'THIRD_PARTY_LICENSES.txt'),licenses.join('\n--------------------\n'));
 console.log('Built browser-local judgment formatter in _site/');
+
+// Content-addressed URLs prevent stale scripts or styles after a Pages deployment.
+let html=await fs.readFile(path.join(out,'index.html'),'utf8');
+for(const name of ['styles.css','vendor.js','engine.js','editor.js','app.js']){const bytes=await fs.readFile(path.join(out,name)),extension=path.extname(name),hashed=name.slice(0,-extension.length)+'.'+createHash('sha256').update(bytes).digest('hex').slice(0,12)+extension;await fs.writeFile(path.join(out,hashed),bytes);html=html.replaceAll('=\"'+name+'\"','=\"'+hashed+'\"');}
+await fs.writeFile(path.join(out,'index.html'),html);
