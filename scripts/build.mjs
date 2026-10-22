@@ -6,7 +6,7 @@ const require=createRequire(import.meta.url),browserify=require('browserify');
 const root=path.resolve(import.meta.dirname,'..'),out=path.join(root,'_site');
 await fs.mkdir(out,{recursive:true});
 for(const name of ['index.html','styles.css','app.js'])await fs.copyFile(path.join(root,'public',name),path.join(out,name));
-await fs.copyFile(path.join(root,'src/engine.js'),path.join(out,'engine.js'));
+for(const name of ['engine.js','editor.js'])await fs.copyFile(path.join(root,'src',name),path.join(out,name));
 // word-extractor 1.0.4 includes one byte of the UTF-16 directory-name terminator.
 // Node drops that odd byte; browser Buffer decodes it as NUL. Exclude both bytes.
 const bundler=browserify(path.join(root,'src/vendor.cjs')).transform(file=>{
