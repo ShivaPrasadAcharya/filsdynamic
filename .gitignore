@@ -1,0 +1,7 @@
+_site/
+node_modules/
+.openai/
+test-output/
+release/
+__pycache__/
+*.pyc
