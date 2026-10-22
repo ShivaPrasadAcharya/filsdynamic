@@ -1,55 +1,50 @@
-# फैसला ढाँचा — filsdynamic
+# filsdynamic
 
-A browser-local formatting tool for Nepali court full-judgment drafts. Open a `.docx`, `.doc`, `.rtf` or `.txt` file, choose required formatting, review the result, and download an editable `.docx`.
+A browser-local editor for formatting Nepali court judgment drafts. Open DOCX, DOC, RTF or TXT, select words or paragraphs directly in the live preview, apply formatting, and download an editable DOCX.
 
-## Operator workflow
+## Use
 
-1. **मस्यौदा खोल्नुहोस्** — click or drop one document, up to 25 MB.
-2. **कस्तो ढाँचा आवश्यक छ?** — choose original formatting, the adjustable court preset, or custom settings.
-3. Review paragraph roles. Select individual paragraphs when changes should apply to only part of the draft. Choose main-paragraph and subparagraph levels.
-4. Apply formatting, review the preview, and download the DOCX. Changing settings disables the previous download until the new settings are applied.
+1. Open or drop one draft (up to 25 MB). Its document preview appears immediately.
+2. Drag to select a word, a line, or several paragraphs. A floating formatting toolbar appears. Click a paragraph to target the entire paragraph. Right-click opens the full menu, with alignment, numbering, hierarchy and indent submenus.
+3. Use the toolbar for fonts, size, bold, italic, underline, strike, text colour, highlight and alignment. Ctrl+B/I/U work on the selection. Ctrl+F finds text and selects a match for formatting.
+4. Use **Number**, **Main**, **Sub**, or **Promote** for linked paragraph numbering. **Auto-number judgment paragraphs** targets detected body paragraphs and existing numbered paragraphs, excluding tables and headings. Review the selected paragraphs. Recognized typed prefixes are removed automatically when numbering is applied.
+5. Adjust paragraph indents, number gap, line spacing and before/after spacing in the right panel. First-line and hanging indents are mutually exclusive. Keep-with-next, keep-lines-together and page-break-before are supported.
+6. Copy formatting from one selection and paste it onto another (Ctrl+Alt+C / Ctrl+Alt+V). This copies text and paragraph formatting, while numbering membership is controlled separately. Undo/redo are available.
+7. Page setup controls paper size and margins. Defaults are A4, **left 1.5 cm and top/right/bottom 0.5 cm**. Letter, Legal and custom dimensions are available. These are user-requested working defaults, not official court formatting rules.
+8. Changes refresh the preview automatically. Download becomes available when the latest version is ready. Download before closing the page; documents are not persisted.
 
-The sample button provides fictional text without actual case facts or legal conclusions.
+The sample contains fictional formatting text, without actual case facts or legal conclusions.
 
-## Formatting controls
+## Nepali numbering and Fontasy Himali
 
-- Keep the original DOCX byte-for-byte, or apply selected changes.
-- Font, size, bold, alignment, line spacing, paragraph spacing and first-line indentation.
-- Paragraph roles: court/main title, section heading, metadata/parties, body, signature and keep-original.
-- Bold centered headings and right-aligned signatures. Signature paragraphs stay with preceding text.
-- Editable Word multilevel numbering: `१.`, `१.१.`, `१.१.१.` or English digits; up to nine levels, starting number, optional restart by section, and optional removal of typed number prefixes.
-- Original numbering remains the default. Typed numbers are removed only with the explicit option. Headings and table paragraphs are excluded from automatic body numbering.
-- A4, Letter and Legal paper with adjustable margins.
-- Save and reuse formatting settings in this browser. Document contents are never saved to localStorage.
+Numbers form one native Word multilevel list with up to nine levels. Assigning a parent as a subparagraph moves its descendants with it, and later numbers update. Removing a numbered paragraph adjusts following numbers. A subparagraph needs a preceding parent.
 
-The court preset uses A4, left margin 27 mm, other margins 20 mm, Mangal 14 pt, 1.5 line spacing, 6 pt after paragraphs, justified body and 16 pt bold centered headings. These are configurable working defaults, not a claim about mandatory official court rules.
+Fontasy Himali is the default number font. Its legacy encoding uses ASCII digits for Nepali numeral glyphs and `=` for a full stop. The app therefore writes decimal Word counters and encoded separators when a Himali font is selected. Other number fonts use Unicode Devanagari counters. The mapping is consistent with the `FONTASY_HIMALI_TT` character map in `npttf2utf` 0.3.7; no conversion package is used at runtime.
 
-## Input support and preservation
+Install the selected font on the computer opening the Word file. Fonts are not bundled or embedded. The preview uses Unicode Nepali digits unless the operator loads a local Fontasy Himali font through **Load Fontasy Himali font for preview**. That font file stays in the browser. The number font name is customizable to match the installed font's family name.
+
+The number-to-text gap changes the list text tab stop and hanging distance together, keeping the number position stable. The preview uses a measured label width. Word uses its native tab and font metrics, so exact gaps and page breaks may differ slightly between applications.
+
+## Import and preservation
 
 | Input | Behavior |
 | --- | --- |
-| DOCX | Changes the original OOXML package. Unrelated images, headers, footers, tables, footnotes and relationships remain in the package. Table paragraphs default to keep-original. Original mode returns identical source bytes. |
-| DOC | Extracts available Unicode text locally and creates a DOCX. Original styling, tables as tables, images and complex layout are not preserved. Headers/footers are rebuilt from extracted text. Available footnotes, endnotes, comments and text-box text are appended in labeled sections. An import notice is displayed. |
-| RTF | Imports supported bold, italic, underline, strike, fonts, sizes, colors, indentation and paragraph alignment. Complex tables, images, lists, stylesheets and original pagination are not fully preserved. |
-| TXT | UTF-8 and UTF-16 with BOM detection. Each source newline becomes a paragraph; empty lines remain. |
+| DOCX | Edits paragraph/run properties in the original OOXML package. Tables, images, headers, footers, footnotes and unrelated package parts are retained. Partial formatting splits text runs while preserving their parent containers and relationships. |
+| DOC | Extracts available text locally and creates a DOCX. Original fonts, tables as tables, images and complex layout are not retained. Headers/footers are rebuilt; available notes, comments and text-box text are appended in labeled sections. |
+| RTF | Imports supported inline styles, fonts, sizes, colours, alignment and indents. Complex tables, images, lists, stylesheets and pagination may change. |
+| TXT | Supports UTF-8 and UTF-16 BOM detection. Each newline becomes a paragraph; empty lines are retained. |
 
-Names, dates, amounts, facts, findings and legal language are not rewritten. Explicit typed-number removal removes recognized number prefixes only.
+The app formats source wording; it does not rewrite facts, findings, names, dates or amounts. Numbering removes recognized numeric prefixes at paragraph starts. Preeti/Kantipur text is not converted to Unicode. Keep the correct font for legacy text.
 
-Preeti/Kantipur fonts are not converted to Unicode; keep the original font or convert the source separately. Fonts must be available on the computer opening the DOCX. Browser pagination is approximate. Office readers may render language-specific numbering and pagination differently. Review the downloaded file in the intended Word application.
+Browser pagination is approximate. Complex fields or embedded content can prevent exact word-to-source matching; those paragraphs can still be formatted as a whole. Unsupported nested paragraph structures report an error. Review final pagination and fonts in the intended Word application.
 
 ## Privacy
 
-All processing happens in the visitor's browser. Drafts are not uploaded to GitHub, GitHub Actions or another server. This repository contains application source and a synthetic test fixture only. There are no runtime CDN scripts, external font requests, analytics or document API calls. Preview copies remove external relationships and disable altChunk rendering; downloads retain original source relationships.
+Processing is local to the visitor's browser. Drafts and locally loaded fonts are not uploaded to GitHub, Actions or another server. The source repository contains application code and synthetic fixtures only. There are no runtime CDN scripts, remote font requests, analytics or document API calls. Preview copies strip external relationships and disable altChunk rendering; downloads preserve original source relationships.
 
-Reloading or closing clears the open document. Download output before leaving. Saved presets contain settings only.
+## GitHub Pages
 
-## GitHub Pages deployment
-
-1. Commit the project to `main`.
-2. In **Settings → Pages → Build and deployment**, choose **GitHub Actions**.
-3. The included workflow runs `npm ci`, builds the app, runs preservation/import tests and deploys `_site` with the official Pages Actions.
-
-Every push to `main` redeploys the app. The workflow also supports manual runs. No server, processing secret or API key is required. Do not place actual judgment inputs in the repository.
+The included workflow builds, tests and deploys `_site` on every push to `main`. In repository **Settings → Pages**, choose **GitHub Actions** as the source. The workflow can also be run manually. No processing server or API key is required. Do not commit actual judgment drafts.
 
 ## Development
 
@@ -62,8 +57,8 @@ npm test
 python3 -m http.server 8000 --directory _site
 ```
 
-Open `http://localhost:8000`. Rebuild after editing `public/` or `src/`. Run `npm run portable` after building for a single-file version at `release/filsdynamic_preview.html` that opens without a server.
+Open localhost:8000. Rebuild after source edits. `npm run portable` creates a single-file offline version at `release/filsdynamic_preview.html` after building.
 
-`public/` contains the UI, `src/engine.js` handles import/formatting, and `src/vendor.cjs` bundles local dependencies. The build includes a narrow compatibility fix for an odd-byte UTF-16 directory-name read in the pinned Word extractor. The shipped-browser-bundle tests exercise that fix with a synthetic binary DOC fixture.
+`public/` contains the UI. `src/engine.js` handles import and OOXML helpers; `src/editor.js` handles selections, run splitting, paragraph formatting, numbering, history snapshots and export. `src/vendor.cjs` bundles local dependencies. The build retains a narrow UTF-16 directory-name compatibility fix for the pinned legacy DOC extractor, verified against the actual browser Buffer implementation.
 
-Tests cover exact original preservation, unchanged wording, tables and unrelated package parts, selected-paragraph isolation, native numbering, explicit prefix replacement, Unicode TXT/RTF, binary DOC, browser Buffer compatibility and preview isolation. Third-party notices are included in the deployed build. The fixture contains no actual case data.
+Tests cover import regressions, Unicode preservation, partial formatting, hyperlinks/drawings/tables and unrelated package parts, linked numbering and hierarchy changes, Fontasy encoding, number gaps, special indents, page margins, undo snapshots and preview isolation. Third-party notices are included in the build.
